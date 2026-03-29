@@ -32,8 +32,34 @@ The project implements a complete ML pipeline in a single notebook/script:
 
 **Evaluation:** `measure_error()` at line 565 of the `.py` file computes accuracy/precision/recall/F1 for a given split label. All models are compared via a unified ROC curve plot.
 
+## Intentional Code Structure
+
+The notebook/script contains the **full pipeline twice** — this is intentional. The first run uses the raw data (zeros kept), the second run uses the corrected data (zeros imputed). This demonstrates the impact of the preprocessing fix as part of the project's narrative.
+
+## Actual Model Results
+
+Results extracted from embedded notebook outputs (threshold = 0.35):
+
+**Before fix (zeros kept):**
+| Model | Accuracy | AUC |
+|---|---|---|
+| LR Regular | 76.2% | 0.8435 |
+| DT Optimized | 76.6% | — |
+| Naive Bayes | 75.8% | 0.8235 |
+| DT Full | 76.2% | — (overfits: 23.8pp gap) |
+
+**After fix (zeros imputed):**
+| Model | Accuracy | AUC |
+|---|---|---|
+| LR variants | 77.9% | 0.843–0.844 |
+| Naive Bayes | 77.9% | 0.8347 |
+| DT Full | 69.3% | — (worse after fix — spurious splits removed) |
+
+Key insight: zero imputation improves linear models (+2pp) but hurts Decision Trees (−7pp) by eliminating the easy zero-based splits they were exploiting.
+
 ## Key Files
 
 - [Diabetes-Project/Final_Project_Diabetes (1).ipynb](Diabetes-Project/Final_Project_Diabetes%20(1).ipynb) — primary notebook with outputs
-- [Diabetes-Project/final_project_diabetes.py](Diabetes-Project/final_project_diabetes.py) — exported Python script (1829 lines)
+- [Diabetes-Project/final_project_diabetes.py](Diabetes-Project/final_project_diabetes.py) — exported Python script (1829 lines, pipeline appears twice intentionally)
+- [Diabetes-Project/dashboard.html](Diabetes-Project/dashboard.html) — standalone interactive dashboard (open in browser, no server needed); toggle between before/after fix phases
 - [Diabetes-Project/README.md](Diabetes-Project/README.md) — full methodology and feature documentation
